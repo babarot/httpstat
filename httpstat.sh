@@ -58,6 +58,11 @@ do
     shift
 done
 
+if [[ -z $url ]]; then
+    echo "too few arguments" >&2
+    exit 1
+fi
+
 curl_format='{
 "time_namelookup": %{time_namelookup},
 "time_connect": %{time_connect},
@@ -162,13 +167,13 @@ http_template="$white
 
 # Print header
 cat "$head" \
-    | perl -pe 's/^HTTP/'$green'HTTP'$reset'/g' \
+    | perl -pe 's/^(HTTP)(.*)$/'$green'$1'$reset$cyan'$2'$reset'/g' \
     | perl -pe 's/^(.*?): (.*)$/'$white'$1: '$cyan'$2/g'
 printf "$reset"
 
 # Print body
 if [[ $HTTPSTAT_SHOW_BODY == true ]]; then
-    :
+    cat "$body"; printf '\n'
 else
     printf "${green}Body${reset} stored in: $body\n"
 fi
@@ -179,7 +184,7 @@ else
     printf "$http_template\n"
 fi
 
-    # speed, originally bytes per second
+# speed, originally bytes per second
 if [[ $HTTPSTAT_SHOW_SPEED == true ]]; then
     printf "speed_download %.1f KiB, speed_upload %.1f KiB\n" \
         "$(calc $speed_download / 1024)" \

@@ -3,7 +3,7 @@ httpstat
 
 curl statistics made simple.
 
-![](demo.png)
+<center><img src="demo.png" width="400"></center>
 
 ## Installation
 
