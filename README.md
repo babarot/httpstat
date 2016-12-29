@@ -42,8 +42,8 @@ There are two ways to get httpstat:
     ```zsh
     zplug "b4b4r07/httpstat", \
         as:command, \
-        use:'*.sh', \
-        rename-to:'httpstat'
+        use:'(*).sh', \
+        rename-to:'$1'
     ```
 
 ## Implementations
