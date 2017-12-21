@@ -96,11 +96,19 @@ get() {
         | awk '{print $2}' \
         | sed 's/,//g'
     )"
-    echo "$d"*1000 | bc -l
+    if type bc &>/dev/null; then
+        echo "$d"*1000 | bc -l
+    else
+        echo "$d" | awk 'END{print $0*1000}'
+    fi
 }
 
 calc() {
-    echo "$@" | bc -l
+    if type bc &>/dev/null; then
+        echo "$@" | bc -l
+    else
+        echo "$@" | awk "BEGIN{print $*}"
+    fi
 }
 
 time_namelookup="$(get time_namelookup)"
