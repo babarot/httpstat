@@ -122,35 +122,35 @@ speed_download="$(get speed_download)"
 speed_upload="$(get speed_upload)"
 
 range_dns="$time_namelookup"
-range_connection="$(calc $time_connect - $time_namelookup)"
-range_ssl="$(calc $time_pretransfer - $time_connect)"
-range_server="$(calc $time_starttransfer - $time_pretransfer)"
-range_transfer="$(calc $time_total - $time_starttransfer)"
+range_connection="$(calc "$time_connect" - "$time_namelookup")"
+range_ssl="$(calc "$time_pretransfer" - "$time_connect")"
+range_server="$(calc "$time_starttransfer" - "$time_pretransfer")"
+range_transfer="$(calc "$time_total" - "$time_starttransfer")"
 
 fmta() {
-    echo $1 \
+    echo "$1" \
         | awk '{printf("%5dms\n", $1 + 0.5)}'
 }
 
 fmtb() {
     local d
     d="$(
-    echo $1 \
+    echo "$1" \
         | awk '{printf("%d\n", $1 + 0.5)}'
     )"
     printf "%-7s\n" "${d}ms"
 }
 
-a000="$cyan$(fmta $range_dns)$reset"
-a001="$cyan$(fmta $range_connection)$reset"
-a002="$cyan$(fmta $range_ssl)$reset"
-a003="$cyan$(fmta $range_server)$reset"
-a004="$cyan$(fmta $range_transfer)$reset"
-b000="$cyan$(fmtb $time_namelookup)$reset"
-b001="$cyan$(fmtb $time_connect)$reset"
-b002="$cyan$(fmtb $time_pretransfer)$reset"
-b003="$cyan$(fmtb $time_starttransfer)$reset"
-b004="$cyan$(fmtb $time_total)$reset"
+a000="$cyan$(fmta "$range_dns")$reset"
+a001="$cyan$(fmta "$range_connection")$reset"
+a002="$cyan$(fmta "$range_ssl")$reset"
+a003="$cyan$(fmta "$range_server")$reset"
+a004="$cyan$(fmta "$range_transfer")$reset"
+b000="$cyan$(fmtb "$time_namelookup")$reset"
+b001="$cyan$(fmtb "$time_connect")$reset"
+b002="$cyan$(fmtb "$time_pretransfer")$reset"
+b003="$cyan$(fmtb "$time_starttransfer")$reset"
+b004="$cyan$(fmtb "$time_total")$reset"
 
 https_template="$white
   DNS Lookup   TCP Connection   SSL Handshake   Server Processing   Content Transfer$reset
@@ -173,28 +173,32 @@ http_template="$white
                                                                  total:${b004}
 "
 
-# Print header
-cat "$head" \
-    | perl -pe 's/^(HTTP)(.*)$/'$green'$1'$reset$cyan'$2'$reset'/g' \
-    | perl -pe 's/^(.*?): (.*)$/'$white'$1: '$cyan'$2/g'
-printf "$reset"
+# output, need to print escape sequences raw (disable those checks for shellcheck)
+# shellcheck disable=SC2059,SC2002
+{
+    # Print header
+    cat "$head" \
+        | perl -pe 's/^(HTTP)(.*)$/'"$green"'$1'"$reset""$cyan"'$2'"$reset"'/g' \
+        | perl -pe 's/^(.*?): (.*)$/'"$white"'$1: '"$cyan"'$2/g'
+    printf "$reset"
 
-# Print body
-if [[ $HTTPSTAT_SHOW_BODY == true ]]; then
-    cat "$body"; printf '\n'
-else
-    printf "${green}Body${reset} stored in: $body\n"
-fi
+    # Print body
+    if [[ "$HTTPSTAT_SHOW_BODY" == true ]]; then
+        cat "$body"; printf '\n'
+    else
+        printf "${green}Body${reset} stored in: $body\n"
+    fi
 
-if [[ $url =~ https:// ]]; then
-    printf "$https_template\n"
-else
-    printf "$http_template\n"
-fi
+    if [[ "$url" =~ https:// ]]; then
+        printf "$https_template\n"
+    else
+        printf "$http_template\n"
+    fi
 
-# speed, originally bytes per second
-if [[ $HTTPSTAT_SHOW_SPEED == true ]]; then
-    printf "speed_download %.1f KiB, speed_upload %.1f KiB\n" \
-        "$(calc $speed_download / 1024)" \
-        "$(calc $speed_upload / 1024)"
-fi
+    # speed, originally bytes per second
+    if [[ "$HTTPSTAT_SHOW_SPEED" == true ]]; then
+        printf "speed_download %.1f KiB, speed_upload %.1f KiB\n" \
+            "$(calc "$speed_download" / 1024)" \
+            "$(calc "$speed_upload" / 1024)"
+    fi
+}
