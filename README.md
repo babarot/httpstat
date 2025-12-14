@@ -133,15 +133,12 @@ For **HTTPS** requests, the output includes an additional SSL Handshake phase:
 There are two ways to get httpstat:
 
 - Download the script directly:
-	- `wget https://raw.githubusercontent.com/babarot/httpstat/master/httpstat.sh`
-	- `curl https://raw.githubusercontent.com/babarot/httpstat/master/httpstat.sh >httpstat.sh`
+	- `wget https://raw.githubusercontent.com/babarot/httpstat/master/httpstat`
+	- `curl -o httpstat https://raw.githubusercontent.com/babarot/httpstat/master/httpstat`
 - Install through [zplug](https://github.com/zplug/zplug):
 
     ```zsh
-    zplug "babarot/httpstat", \
-        as:command, \
-        use:'(*).sh', \
-        rename-to:'$1'
+    zplug "babarot/httpstat", as:command, use:httpstat
     ```
 
 ## Troubleshooting
