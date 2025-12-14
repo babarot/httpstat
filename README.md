@@ -4,7 +4,7 @@ httpstat
 curl statistics made simple.
 
 <p align="center">
-<img src="demo.png" width="500">
+<img src="img/demo.png" width="500">
 </p>
 
 ## Overview
